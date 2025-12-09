@@ -16,7 +16,11 @@ public class EmailServiceImpl implements EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("[Security Demo] OTP cho " + purpose);
-        message.setText("Mã OTP của bạn là: " + otp + "\nMã có hiệu lực trong 5 phút.");
+        message.setText("""
+                Mã OTP của bạn là: %s
+                Mã có hiệu lực trong 5 phút và cho phép tối đa 5 lần nhập sai.
+                Nếu không phải bạn yêu cầu, vui lòng bỏ qua email này.
+                """.formatted(otp));
         mailSender.send(message);
     }
 }

@@ -26,6 +26,17 @@ public class User {
     @Column(nullable = false)
     private boolean mfaEnabled = true;
 
+    @Column
+    private String totpSecret;
+
+    @Column(nullable = false)
+    private boolean totpEnabled = false;
+
+    @Column(nullable = false)
+    private int totpFailedAttempts = 0;
+
+    private LocalDateTime totpLockoutUntil;
+
     @Column(nullable = false)
     private int failedLoginAttempts = 0;
 

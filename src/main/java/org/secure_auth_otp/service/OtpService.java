@@ -2,9 +2,15 @@ package org.secure_auth_otp.service;
 
 public interface OtpService {
 
-    public void sendOtp(String email, String purpose);
+    int getOtpTtlMinutes();
 
-    public boolean verifyOtp(String email, String purpose, String inputOtp);
+    int getMaxOtpAttempts();
+
+    void sendOtp(String email, String purpose);
+
+    void resendOtp(String email, String purpose);
+
+    boolean verifyOtp(String email, String purpose, String inputOtp);
 
 }
 

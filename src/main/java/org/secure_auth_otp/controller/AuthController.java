@@ -3,6 +3,7 @@ package org.secure_auth_otp.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.secure_auth_otp.dto.RegisterForm;
+import org.secure_auth_otp.service.OtpService;
 import org.secure_auth_otp.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final OtpService otpService;
 
     // Trang đăng ký
     @GetMapping("/register")
@@ -27,6 +29,7 @@ public class AuthController {
             userService.register(form.getEmail(), form.getPassword());
             model.addAttribute("email", form.getEmail());
             model.addAttribute("purpose", "SIGNUP_VERIFY_EMAIL");
+            appendOtpMeta(model);
             return "twofa"; // dùng chung view OTP
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -48,8 +51,19 @@ public class AuthController {
             model.addAttribute("email", email);
             model.addAttribute("purpose", "SIGNUP_VERIFY_EMAIL");
             model.addAttribute("error", e.getMessage());
+            appendOtpMeta(model);
             return "twofa";
         }
+    }
+
+    @PostMapping("/register/resend-otp")
+    public String resendSignupOtp(@RequestParam String email, Model model) {
+        userService.resendSignupOtp(email);
+        model.addAttribute("email", email);
+        model.addAttribute("purpose", "SIGNUP_VERIFY_EMAIL");
+        model.addAttribute("message", "Đã gửi lại OTP. Vui lòng kiểm tra email.");
+        appendOtpMeta(model);
+        return "twofa";
     }
 
     // Trang login (Spring Security sẽ xử lý POST /login)
@@ -58,12 +72,10 @@ public class AuthController {
         return "login";
     }
 
-    // Home đơn giản
-    @GetMapping("/")
-    public String home() {
-        return "home"; // anh tự tạo home.html nếu cần
+    private void appendOtpMeta(Model model) {
+        model.addAttribute("otpTtlMinutes", otpService.getOtpTtlMinutes());
+        model.addAttribute("maxOtpAttempts", otpService.getMaxOtpAttempts());
     }
-
 
 }
 

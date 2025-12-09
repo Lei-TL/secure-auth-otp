@@ -33,6 +33,9 @@ public class OtpToken {
     private int maxAttempts = 5;
 
     @Column(nullable = false)
+    private int resendCount = 0;
+
+    @Column(nullable = false)
     private boolean used = false;
 
     @Column(nullable = false)
@@ -43,6 +46,9 @@ public class OtpToken {
         createdAt = LocalDateTime.now();
         if (maxAttempts == 0) {
             maxAttempts = 5;
+        }
+        if (resendCount < 0) {
+            resendCount = 0;
         }
     }
 

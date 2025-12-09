@@ -8,47 +8,80 @@
 </head>
 <body class="bg-light">
 
+<div th:replace="fragments/navbar :: navbar"></div>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-7">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title mb-3">Trang chủ hệ thống OTP</h3>
+            <div class="text-center mb-4">
+                <h2 class="fw-semibold">OTP Security Lab</h2>
+                <p class="text-muted mb-0">Demo tổng hợp Email OTP, TOTP 2FA, HOTP/TOTP Labs</p>
+            </div>
 
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Email OTP</h5>
+                            <p class="text-muted small">Đăng ký / đổi mật khẩu với mã OTP gửi email, TTL 5 phút, giới hạn số lần nhập.</p>
+                            <a th:href="@{/register}" class="btn btn-outline-primary btn-sm">Register + Verify OTP</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">TOTP 2FA</h5>
+                            <p class="text-muted small mb-1">
+                                Mã 6 số / 30s, cửa sổ ±1 step. Trạng thái:
+                                <span th:if="${totpEnabled}" class="text-success fw-semibold">Đã bật</span>
+                                <span th:if="${totpEnabled == null or !totpEnabled}" class="text-danger fw-semibold">Chưa bật</span>
+                            </p>
+                            <div th:if="${totpEnabled == null or !totpEnabled}">
+                                <a th:href="@{/totp/setup}" class="btn btn-outline-secondary btn-sm">Bật TOTP 2FA</a>
+                            </div>
+                            <div th:if="${totpEnabled}">
+                                <span class="badge bg-success">Enabled</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">HOTP Lab (RFC 4226)</h5>
+                            <p class="text-muted small">Nhập secret/counter, xem OTP, HMAC hex, offset, binary code; thử verify với window.</p>
+                            <a th:href="@{/lab/hotp}" class="btn btn-outline-secondary btn-sm">Mở HOTP Lab</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">TOTP Lab (RFC 6238)</h5>
+                            <p class="text-muted small">Quan sát counter T, OTP mỗi 30s, cửa sổ ± step; giải thích liên hệ thời gian.</p>
+                            <a th:href="@{/lab/totp}" class="btn btn-outline-secondary btn-sm">Mở TOTP Lab</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Phiên & thao tác</h5>
                     <p class="mb-1">
                         Xin chào,
                         <strong th:text="${email}">user@example.com</strong>
                     </p>
-
-                    <p class="text-muted" style="font-size: 0.9rem;">
-                        Đây là dashboard nhỏ để demo các luồng an ninh: đăng nhập, xác thực email bằng OTP
-                        và đổi mật khẩu có 2FA.
-                    </p>
-
-                    <hr>
-
-                    <ul class="list-unstyled mb-3">
-                        <li class="mb-2">
-                            <a th:href="@{/change-password}" class="btn btn-outline-primary btn-sm">
-                                Đổi mật khẩu (có OTP 2FA)
-                            </a>
-                        </li>
-                    </ul>
-
-                    <form th:action="@{/logout}" method="post" class="mt-3">
-                        <!-- Nếu bật CSRF:
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        -->
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            Đăng xuất
-                        </button>
-                    </form>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a th:href="@{/change-password}" class="btn btn-outline-primary btn-sm">Đổi mật khẩu (OTP email)</a>
+                        <a th:href="@{/logs}" class="btn btn-outline-dark btn-sm">Logs (demo)</a>
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Đăng xuất</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-            <p class="text-center text-muted mt-3" style="font-size: 0.85rem;">
-                Tài khoản đã đăng nhập: xác thực phiên bằng session, bảo vệ bởi Spring Security.
-            </p>
         </div>
     </div>
 </div>

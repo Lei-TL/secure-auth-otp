@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService {
     private final OtpService otpService;
 
     // Đăng ký: tạo user + gửi OTP xác thực email
+    @Override
     public void register(String email, String rawPassword) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email đã tồn tại");
@@ -31,7 +32,13 @@ public class UserServiceImpl implements UserService {
         otpService.sendOtp(email, "SIGNUP_VERIFY_EMAIL");
     }
 
+    @Override
+    public void resendSignupOtp(String email) {
+        otpService.resendOtp(email, "SIGNUP_VERIFY_EMAIL");
+    }
+
     // Verify OTP signup
+    @Override
     public void verifySignupOtp(String email, String otp) {
         boolean ok = otpService.verifyOtp(email, "SIGNUP_VERIFY_EMAIL", otp);
         if (!ok) {
@@ -44,11 +51,18 @@ public class UserServiceImpl implements UserService {
     }
 
     // Gửi OTP cho đổi mật khẩu (2FA)
+    @Override
     public void sendChangePasswordOtp(String email) {
         otpService.sendOtp(email, "CHANGE_PASSWORD_2FA");
     }
 
+    @Override
+    public void resendChangePasswordOtp(String email) {
+        otpService.resendOtp(email, "CHANGE_PASSWORD_2FA");
+    }
+
     // Đổi mật khẩu sau khi verify OTP (2FA)
+    @Override
     public void changePasswordWithOtp(String email, String otp, String newPassword) {
         boolean ok = otpService.verifyOtp(email, "CHANGE_PASSWORD_2FA", otp);
         if (!ok) {
